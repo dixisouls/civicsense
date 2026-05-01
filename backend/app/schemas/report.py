@@ -10,7 +10,7 @@ class Stub311Draft(BaseModel):
     lat: float
     lng: float
     agency_responsible: str = "SF Public Works / DPW"
-    status: str = "stub: submitted"
+    status: str = "Report Submitted"
 
 
 class ReportResponse(BaseModel):
