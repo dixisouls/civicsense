@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { SignInModal } from "@/components/auth/SignInModal"
 
@@ -11,9 +11,19 @@ export function BottomNav() {
   const { user, signOut } = useAuth()
   const [signInOpen, setSignInOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
+  const [imgFailed, setImgFailed] = useState(false)
 
   const isMap = pathname === "/"
   const isReports = pathname === "/my-reports"
+
+  const rawPhotoURL: string | null =
+    user?.photoURL ?? user?.providerData?.[0]?.photoURL ?? null
+
+  useEffect(() => {
+    setImgFailed(false)
+  }, [rawPhotoURL])
+
+  const photoURL: string | null = imgFailed ? null : rawPhotoURL
 
   const initials = user?.displayName
     ? user.displayName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
@@ -126,13 +136,15 @@ export function BottomNav() {
             }}
             aria-label="Account"
           >
-            {user.photoURL ? (
+            {photoURL ? (
               <img
-                src={user.photoURL}
+                src={photoURL}
                 alt="Account"
                 style={{ width: 24, height: 24, borderRadius: "50%", objectFit: "cover", border: "1.5px solid var(--color-border)" }}
                 width={24}
                 height={24}
+                referrerPolicy="no-referrer"
+                onError={() => setImgFailed(true)}
               />
             ) : (
               <div style={{
@@ -206,13 +218,15 @@ export function BottomNav() {
 
             {/* Avatar + name */}
             <div style={{ padding: "16px 20px 12px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid var(--color-border)" }}>
-              {user.photoURL ? (
+              {photoURL ? (
                 <img
-                  src={user.photoURL}
+                  src={photoURL}
                   alt="Account"
                   style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--color-border)" }}
                   width={44}
                   height={44}
+                  referrerPolicy="no-referrer"
+                  onError={() => setImgFailed(true)}
                 />
               ) : (
                 <div style={{
