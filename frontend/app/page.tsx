@@ -71,7 +71,7 @@ export default function HomePage() {
   return (
     <>
       {/* Mobile */}
-      <div className="lg:hidden">
+      <div className="xl:hidden">
         <MobileLayout
           map={map}
           feed={feed}

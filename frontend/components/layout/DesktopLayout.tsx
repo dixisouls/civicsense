@@ -28,7 +28,7 @@ export function DesktopLayout({
   const pathname = usePathname()
 
   return (
-    <div className="hidden lg:flex h-screen overflow-hidden" style={{ backgroundColor: "var(--color-bg)" }}>
+    <div className="hidden xl:flex h-screen overflow-hidden" style={{ backgroundColor: "var(--color-bg)" }}>
       {/* Sidebar */}
       <aside
         style={{

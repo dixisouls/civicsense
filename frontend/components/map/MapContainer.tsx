@@ -42,6 +42,23 @@ export function MapContainer({ coords, className, style }: MapContainerProps) {
     initMap()
   }, [initMap])
 
+  // Trigger Google Maps resize when the container changes dimensions.
+  // iOS Safari changes the viewport height as the browser chrome shows/hides,
+  // and orientation changes alter both axes — Maps doesn't auto-detect this.
+  useEffect(() => {
+    const el = mapRef.current
+    if (!el) return
+    const observer = new ResizeObserver(() => {
+      if (googleMapRef.current) {
+        google.maps.event.trigger(googleMapRef.current, "resize")
+        const c = googleMapRef.current.getCenter()
+        if (c) googleMapRef.current.panTo(c)
+      }
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   useEffect(() => {
     if (!googleMapRef.current) return
     googleMapRef.current.panTo(center)
