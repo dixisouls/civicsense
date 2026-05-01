@@ -20,7 +20,7 @@ Beyond browsing, residents can report problems themselves by snapping a photo. A
 
 ## Built with
 
-Next.js · FastAPI · PostgreSQL + PostGIS · Google Maps · Gemini 2.5 Flash · Firebase Auth · Redis · Docker
+Next.js · FastAPI · PostgreSQL + PostGIS · Google Maps · Gemini 3.1 Flash · Firebase Auth · Redis · Docker
 
 ## Running locally
 
