@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth"
 export function UserMenu() {
   const { user, signOut } = useAuth()
   const [open, setOpen] = useState(false)
+  const [imgFailed, setImgFailed] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -17,7 +18,16 @@ export function UserMenu() {
     return () => document.removeEventListener("mousedown", handler)
   }, [open])
 
+  const rawPhotoURL: string | null =
+    user?.photoURL ?? user?.providerData?.[0]?.photoURL ?? null
+
+  useEffect(() => {
+    setImgFailed(false)
+  }, [rawPhotoURL])
+
   if (!user) return null
+
+  const photoURL: string | null = imgFailed ? null : rawPhotoURL
 
   const initials = user.displayName
     ? user.displayName
@@ -46,13 +56,15 @@ export function UserMenu() {
         aria-label="Account menu"
         aria-expanded={open}
       >
-        {user.photoURL ? (
+        {photoURL ? (
           <img
-            src={user.photoURL}
+            src={photoURL}
             alt={user.displayName ?? "Account"}
             className="rounded-full w-8 h-8 object-cover"
             width={32}
             height={32}
+            referrerPolicy="no-referrer"
+            onError={() => setImgFailed(true)}
           />
         ) : (
           initials

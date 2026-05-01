@@ -1,4 +1,4 @@
-import { getCategoryColor, SEVERITY_COLORS, getStatusLabel } from "@/lib/constants"
+import { getCategoryColor, SEVERITY_COLORS } from "@/lib/constants"
 import type { MapMarker, FeedItem } from "@/types"
 
 export type PopupData = Pick<
@@ -8,52 +8,54 @@ export type PopupData = Pick<
 
 export function renderMapPopupHTML(data: PopupData): string {
   const categoryColor = getCategoryColor(data.category)
-  const severityColor = data.severity && data.severity !== "unknown"
-    ? SEVERITY_COLORS[data.severity]
-    : null
+  const severityColor =
+    data.severity && data.severity !== "unknown"
+      ? SEVERITY_COLORS[data.severity]
+      : null
 
   const photo = data.media_url
-    ? `<img src="${escHtml(data.media_url)}" alt="" style="width:100%;height:160px;object-fit:cover;display:block;border-radius:8px 8px 0 0;" loading="lazy" width="280" height="160">`
+    ? `<img src="${esc(data.media_url)}" alt="" style="width:100%;height:156px;object-fit:cover;display:block;" loading="lazy" width="280" height="156">`
+    : `<div style="width:100%;height:100px;background:#EDE9E3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="1.5" stroke-linecap="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span style="font-size:11px;color:#A8A29E;font-family:monospace;">No photo</span>
+      </div>`
+
+  const severityBadge = severityColor
+    ? `<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-family:monospace;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${severityColor};background:${severityColor}12;border:1px solid ${severityColor}28;">${esc(data.severity!)}</span>`
+    : ""
+
+  const sourceBadge = data.source === "user"
+    ? `<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-family:monospace;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#C93800;background:rgba(201,56,0,0.08);border:1px solid rgba(201,56,0,0.2);">You</span>`
     : ""
 
   const duplicate = data.is_duplicate
-    ? `<p style="font-size:11px;color:#F59E0B;margin-top:8px;display:flex;align-items:center;gap:4px;">
-        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></span>
-        Linked to an existing case
+    ? `<p style="font-size:11px;color:#B45309;margin-top:8px;display:flex;align-items:center;gap:4px;">
+        <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#B45309;flex-shrink:0;"></span>
+        Linked to existing case
       </p>`
     : ""
 
-  const severity = severityColor
-    ? `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:4px;font-size:11px;font-family:monospace;color:${severityColor};background:${severityColor}14;border:1px solid ${severityColor}30;">
-        <span style="width:5px;height:5px;border-radius:50%;background:${severityColor};"></span>
-        ${escHtml(data.severity!)}
-      </span>`
-    : ""
-
-  const sourceBg = data.source === "user" ? "rgba(255,76,0,0.08)" : "#1C1C1C"
-  const sourceColor = data.source === "user" ? "#FF4C00" : "#888888"
-  const sourceBorder = data.source === "user" ? "rgba(255,76,0,0.2)" : "#2A2A2A"
-  const sourceLabel = data.source === "user" ? "You reported" : "311"
-
   return `
-    <div style="width:280px;background:#141414;border-radius:8px;overflow:hidden;font-family:system-ui,sans-serif;">
+    <div style="width:260px;background:#FFFFFF;border-radius:12px;overflow:hidden;font-family:system-ui,sans-serif;">
       ${photo}
       <div style="padding:12px 14px 14px;">
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:11px;font-family:monospace;color:#F5F5F5;background:#1C1C1C;border:1px solid #2A2A2A;">
-            <span style="width:6px;height:6px;border-radius:50%;background:${categoryColor};display:inline-block;"></span>
-            ${escHtml(data.category ?? "Other")}
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;flex-wrap:wrap;">
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:#1C1917;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${categoryColor};flex-shrink:0;"></span>
+            ${esc(data.category ?? "Other")}
           </span>
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:11px;font-family:monospace;color:${sourceColor};background:${sourceBg};border:1px solid ${sourceBorder};">
-            ${sourceLabel}
-          </span>
-          ${severity}
+          ${severityBadge}
+          ${sourceBadge}
         </div>
 
-        ${data.address ? `<p style="font-size:13px;color:#F5F5F5;margin:0 0 4px;line-height:1.4;">${escHtml(data.address)}</p>` : ""}
+        ${data.address ? `<p style="font-size:12px;color:#78716C;margin:0 0 6px;line-height:1.4;">${esc(data.address)}</p>` : ""}
 
-        <p style="font-size:12px;color:#888888;margin:0;font-family:monospace;">
-          Open for ${data.days_open} day${data.days_open !== 1 ? "s" : ""}
+        <p style="font-size:11px;color:#A8A29E;margin:0;font-family:monospace;">
+          Open ${data.days_open}d
         </p>
 
         ${duplicate}
@@ -62,7 +64,7 @@ export function renderMapPopupHTML(data: PopupData): string {
   `
 }
 
-function escHtml(str: string): string {
+function esc(str: string): string {
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
