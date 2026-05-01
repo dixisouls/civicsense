@@ -16,7 +16,7 @@ interface FeedPanelProps {
 const SORTS: SortOption[] = ["nearest", "stalest", "hottest"]
 
 export function FeedPanel({ coords }: FeedPanelProps) {
-  const { activeFilters, setSort, selectedNeighbourhood, setSelectedNeighbourhood } = useMapStore()
+  const { activeFilters, setSort, selectedNeighbourhood, setSelectedNeighbourhood, mapMode, setMapMode } = useMapStore()
   const { data, isLoading, isError, refetch } = useFeed(coords)
   const [neighbourhoodOpen, setNeighbourhoodOpen] = useState(false)
 
@@ -41,6 +41,45 @@ export function FeedPanel({ coords }: FeedPanelProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+
+      {/* Live / Heat toggle */}
+      <div
+        style={{
+          display: "flex",
+          padding: "10px 16px 8px",
+          gap: 6,
+          borderBottom: "1px solid var(--color-border)",
+          flexShrink: 0,
+        }}
+      >
+        {(["live", "heatmap"] as const).map((mode) => {
+          const active = mapMode === mode
+          return (
+            <button
+              key={mode}
+              onClick={() => setMapMode(mode)}
+              style={{
+                flex: 1,
+                padding: "8px",
+                borderRadius: 8,
+                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                fontWeight: 700,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                border: active ? "none" : "1px solid var(--color-border)",
+                backgroundColor: active ? "var(--color-accent)" : "transparent",
+                color: active ? "#FFFFFF" : "var(--color-text-2)",
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+              aria-pressed={active}
+            >
+              {mode === "live" ? "Live" : "Heatmap"}
+            </button>
+          )
+        })}
+      </div>
 
       {/* Sort tabs */}
       <div

@@ -17,7 +17,7 @@ interface MapContainerProps {
 export function MapContainer({ coords, className, style }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<google.maps.Map | null>(null)
-  const { mapMode, setMapMode, heatmapDateRange, setHeatmapDateRange } = useMapStore()
+  const { mapMode, heatmapDateRange, setHeatmapDateRange } = useMapStore()
   const { liveQuery, heatmapQuery } = useMapData(coords)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [draftFrom, setDraftFrom] = useState(heatmapDateRange.from)
@@ -76,48 +76,6 @@ export function MapContainer({ coords, className, style }: MapContainerProps) {
     <div className={`relative ${className ?? ""}`} style={style}>
       <div ref={mapRef} className="w-full h-full" />
 
-      {/* Mode toggle — top right */}
-      <div
-        style={{
-          position: "absolute",
-          top: 12,
-          right: 12,
-          display: "flex",
-          borderRadius: 10,
-          overflow: "hidden",
-          backgroundColor: "var(--color-surface)",
-          boxShadow: "0 1px 8px rgba(0,0,0,0.12)",
-          border: "1px solid var(--color-border)",
-          zIndex: 10,
-        }}
-      >
-        {(["live", "heatmap"] as const).map((mode) => {
-          const active = mapMode === mode
-          return (
-            <button
-              key={mode}
-              onClick={() => setMapMode(mode)}
-              style={{
-                padding: "7px 14px",
-                fontSize: "11px",
-                fontFamily: "var(--font-mono)",
-                fontWeight: 600,
-                letterSpacing: "0.06em",
-                color: active ? "#FFFFFF" : "var(--color-text-2)",
-                backgroundColor: active ? "var(--color-accent)" : "transparent",
-                border: "none",
-                cursor: "pointer",
-                transition: "background-color 0.15s, color 0.15s",
-                minHeight: "36px",
-              }}
-              aria-pressed={active}
-              aria-label={`${mode === "live" ? "Live" : "Heatmap"} view`}
-            >
-              {mode === "live" ? "LIVE" : "HEAT"}
-            </button>
-          )
-        })}
-      </div>
 
       {/* Heatmap date button */}
       {mapMode === "heatmap" && !datePickerOpen && (

@@ -26,13 +26,13 @@ export function MobileLayout({ map, feed, searchBar }: MobileLayoutProps) {
         {map}
       </div>
 
-      {/* Search bar — floating top-left */}
+      {/* Search bar — floating top */}
       <div
         style={{
           position: "absolute",
           top: 12,
           left: 12,
-          right: 80,
+          right: 12,
           zIndex: 20,
         }}
       >

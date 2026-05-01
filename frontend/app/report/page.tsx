@@ -8,6 +8,7 @@ import { StepLocation } from "@/components/report/StepLocation"
 import { StepPhoto } from "@/components/report/StepPhoto"
 import { StepAnalysis } from "@/components/report/StepAnalysis"
 import { StepDraft } from "@/components/report/StepDraft"
+import { BottomNav } from "@/components/ui/BottomNav"
 import type { ReportResponse } from "@/types"
 
 type Step = 1 | 2 | 3 | 4
@@ -169,7 +170,7 @@ export default function ReportPage() {
       <main
         style={{
           flex: 1,
-          padding: "20px 16px 32px",
+          padding: "20px 16px 96px",
           overflowY: "auto",
           backgroundColor: "var(--color-bg)",
         }}
@@ -225,6 +226,8 @@ export default function ReportPage() {
         onClose={() => setSignInOpen(false)}
         message="Sign in to submit a report to SF 311."
       />
+
+      <BottomNav />
     </div>
   )
 }
