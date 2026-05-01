@@ -31,34 +31,56 @@ export function DesktopLayout({
     <div className="hidden lg:flex h-screen overflow-hidden" style={{ backgroundColor: "var(--color-bg)" }}>
       {/* Sidebar */}
       <aside
-        className="flex flex-col flex-shrink-0 overflow-hidden"
         style={{
-          width: "400px",
+          width: 380,
+          flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
           borderRight: "1px solid var(--color-border)",
           backgroundColor: "var(--color-surface)",
         }}
       >
-        {/* Sidebar header */}
+        {/* Header */}
         <div
-          className="flex items-center justify-between px-5 py-4 flex-shrink-0"
-          style={{ borderBottom: "1px solid var(--color-border)" }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "16px 20px",
+            borderBottom: "1px solid var(--color-border)",
+            flexShrink: 0,
+          }}
         >
           <span
-            className="text-sm font-medium tracking-widest"
-            style={{ color: "var(--color-text-1)", fontFamily: "var(--font-mono)" }}
+            style={{
+              fontSize: "13px",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              color: "var(--color-text-1)",
+              fontFamily: "var(--font-mono)",
+            }}
           >
-            CIVIC SENSE
+            CIVICSENSE
           </span>
 
-          <div className="flex items-center gap-3">
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Link
               href="/report"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-opacity"
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+                padding: "6px 14px",
+                borderRadius: 8,
                 backgroundColor: "var(--color-accent)",
-                color: "#fff",
+                color: "#FFFFFF",
+                fontSize: "12px",
                 fontFamily: "var(--font-mono)",
-                minHeight: "32px",
+                fontWeight: 600,
+                letterSpacing: "0.02em",
+                textDecoration: "none",
+                boxShadow: "0 1px 6px rgba(201,56,0,0.25)",
               }}
             >
               + Report
@@ -69,11 +91,13 @@ export function DesktopLayout({
             ) : (
               <button
                 onClick={() => setSignInOpen(true)}
-                className="text-xs"
                 style={{
+                  fontSize: "12px",
                   color: "var(--color-text-2)",
                   fontFamily: "var(--font-mono)",
-                  minHeight: "32px",
+                  cursor: "pointer",
+                  background: "none",
+                  border: "none",
                 }}
               >
                 Sign in
@@ -83,30 +107,30 @@ export function DesktopLayout({
         </div>
 
         {/* Search */}
-        <div className="px-4 py-3 flex-shrink-0" style={{ borderBottom: "1px solid var(--color-border)" }}>
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
           {searchBar}
         </div>
 
         {/* Neighbourhood selector */}
-        <div className="px-4 py-3 flex-shrink-0" style={{ borderBottom: "1px solid var(--color-border)" }}>
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
           {neighbourhoodSelector}
         </div>
 
         {/* Neighbourhood summary */}
         {neighbourhoodPanel && (
-          <div className="px-4 py-3 flex-shrink-0" style={{ borderBottom: "1px solid var(--color-border)" }}>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
             {neighbourhoodPanel}
           </div>
         )}
 
         {/* Feed */}
-        <div className="flex-1 overflow-hidden">
+        <div style={{ flex: 1, overflow: "hidden" }}>
           {feed}
         </div>
       </aside>
 
       {/* Map */}
-      <div className="flex-1 relative">
+      <div style={{ flex: 1, position: "relative" }}>
         {map}
       </div>
 

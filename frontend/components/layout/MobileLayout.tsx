@@ -1,50 +1,58 @@
 "use client"
 
 import type { ReactNode } from "react"
+import { BottomSheet } from "./BottomSheet"
 import { BottomNav } from "@/components/ui/BottomNav"
 
 interface MobileLayoutProps {
   map: ReactNode
   feed: ReactNode
   searchBar: ReactNode
-  neighbourhoodPanel?: ReactNode
 }
 
-export function MobileLayout({ map, feed, searchBar, neighbourhoodPanel }: MobileLayoutProps) {
+export function MobileLayout({ map, feed, searchBar }: MobileLayoutProps) {
   return (
     <div
-      className="flex flex-col h-screen overflow-hidden"
-      style={{ backgroundColor: "var(--color-bg)" }}
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100dvh",
+        overflow: "hidden",
+        backgroundColor: "var(--color-bg)",
+      }}
     >
-      {/* Map section — 55vh */}
-      <div className="relative flex-shrink-0" style={{ height: "55vh" }}>
+      {/* Full-screen map */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
         {map}
-        {/* Search bar overlay */}
+      </div>
+
+      {/* Search bar — floating top */}
+      <div
+        style={{
+          position: "absolute",
+          top: 12,
+          left: 12,
+          right: 12,
+          zIndex: 20,
+        }}
+      >
         <div
-          className="absolute top-3 left-3 right-3 z-10"
-          style={{ maxWidth: "calc(100% - 80px)" }}
+          style={{
+            backgroundColor: "var(--color-surface)",
+            borderRadius: 12,
+            boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+            border: "1px solid var(--color-border)",
+            overflow: "hidden",
+          }}
         >
           {searchBar}
         </div>
       </div>
 
-      {/* Feed section — remaining space */}
-      <div
-        className="flex-1 flex flex-col overflow-hidden"
-        style={{ backgroundColor: "var(--color-surface)" }}
-      >
-        {neighbourhoodPanel && (
-          <div
-            className="px-4 pt-3 flex-shrink-0"
-            style={{ borderBottom: "1px solid var(--color-border)" }}
-          >
-            {neighbourhoodPanel}
-          </div>
-        )}
-        <div className="flex-1 overflow-hidden">
-          {feed}
-        </div>
-      </div>
+      {/* Bottom sheet */}
+      <BottomSheet>
+        {feed}
+      </BottomSheet>
 
       {/* Bottom nav */}
       <BottomNav />

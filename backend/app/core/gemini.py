@@ -59,14 +59,8 @@ class NeighborhoodSummaryResult(BaseModel):
 
 def _get_client() -> genai.Client:
     settings = get_settings()
-    # Env vars GOOGLE_GENAI_USE_VERTEXAI, GOOGLE_CLOUD_PROJECT,
-    # GOOGLE_CLOUD_LOCATION are set via .env and loaded by config.py.
-    # The SDK picks them up automatically.
-    os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", settings.google_genai_use_vertexai)
-    os.environ.setdefault("GOOGLE_CLOUD_PROJECT", settings.google_cloud_project)
-    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", settings.google_cloud_location)
-    return genai.Client()
-
+    
+    return genai.Client(vertexai=settings.google_genai_use_vertexai, api_key=settings.google_api_key)
 
 # ---------------------------------------------------------------------------
 # Photo analysis

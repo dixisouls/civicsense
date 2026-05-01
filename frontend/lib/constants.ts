@@ -8,13 +8,13 @@ export const SF_BOUNDS = {
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  "Illegal Dumping": "#F59E0B",
-  "Graffiti": "#8B5CF6",
-  "Pothole": "#EF4444",
-  "Blocked Sidewalk": "#3B82F6",
-  "Overflowing Bin": "#10B981",
-  "Streetlight Issue": "#FBBF24",
-  "Other": "#6B7280",
+  "Illegal Dumping": "#C05621",
+  "Graffiti": "#6D28D9",
+  "Pothole": "#B91C1C",
+  "Blocked Sidewalk": "#1D4ED8",
+  "Overflowing Bin": "#065F46",
+  "Streetlight Issue": "#92400E",
+  "Other": "#57534E",
 }
 
 export function getCategoryColor(category: string | null): string {
@@ -23,7 +23,7 @@ export function getCategoryColor(category: string | null): string {
 }
 
 export const STATUS_LABELS: Record<string, string> = {
-  "stub: submitted": "Submitted to 311",
+  "stub: submitted": "Report Submitted",
 }
 
 export function getStatusLabel(status: string): string {
@@ -31,10 +31,10 @@ export function getStatusLabel(status: string): string {
 }
 
 export const SEVERITY_COLORS: Record<string, string> = {
-  low: "#22C55E",
-  medium: "#F59E0B",
-  high: "#EF4444",
-  unknown: "#6B7280",
+  low: "#15803D",
+  medium: "#B45309",
+  high: "#B91C1C",
+  unknown: "#78716C",
 }
 
 export const SORT_LABELS: Record<string, string> = {

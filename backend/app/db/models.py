@@ -54,7 +54,7 @@ class UserReport(Base):
     neighborhood = Column(String(128), nullable=True, index=True)
     location = Column(Geography(geometry_type="POINT", srid=4326), nullable=True)
     media_url = Column(Text, nullable=True)
-    status = Column(String(64), nullable=False, default="stub: submitted")
+    status = Column(String(64), nullable=False, default="Report Submitted")
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     is_duplicate = Column(Boolean, nullable=False, default=False)
     duplicate_of_case_id = Column(String(64), nullable=True)

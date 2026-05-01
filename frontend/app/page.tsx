@@ -37,19 +37,11 @@ export default function HomePage() {
     setCenter({ lat, lng })
   }
 
-  const map = (
-    <MapContainer
-      coords={coords}
-      className="w-full h-full"
-    />
-  )
-
-  const searchBar = (
-    <SearchBar onPlaceSelect={handlePlaceSelect} />
-  )
-
+  const map = <MapContainer coords={coords} className="w-full h-full" />
+  const searchBar = <SearchBar onPlaceSelect={handlePlaceSelect} />
   const feed = <FeedPanel coords={coords} />
 
+  // Desktop-only neighbourhood selector
   const neighbourhoodSelector = (
     <select
       value={selectedNeighbourhood ?? ""}
@@ -58,13 +50,14 @@ export default function HomePage() {
       style={{
         backgroundColor: "var(--color-surface-2)",
         border: "1px solid var(--color-border)",
-        color: selectedNeighbourhood ? "var(--color-text-1)" : "var(--color-text-3)",
-        fontSize: "14px",
-        fontFamily: "var(--font-mono)",
+        color: selectedNeighbourhood ? "var(--color-text-1)" : "var(--color-text-2)",
+        fontSize: "13px",
+        fontFamily: "var(--font-sans)",
+        cursor: "pointer",
       }}
       aria-label="Select neighborhood for AI summary"
     >
-      <option value="">Neighborhood summary…</option>
+      <option value="">AI neighbourhood summary…</option>
       {SF_NEIGHBORHOODS.map((n) => (
         <option key={n} value={n}>{n}</option>
       ))}
@@ -77,22 +70,16 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Mobile layout (hidden on lg+) */}
+      {/* Mobile */}
       <div className="lg:hidden">
         <MobileLayout
           map={map}
           feed={feed}
           searchBar={searchBar}
-          neighbourhoodPanel={
-            <div className="flex flex-col gap-2 py-3">
-              {neighbourhoodSelector}
-              {neighbourhoodPanel}
-            </div>
-          }
         />
       </div>
 
-      {/* Desktop layout (hidden below lg) */}
+      {/* Desktop */}
       <DesktopLayout
         map={map}
         feed={feed}
@@ -104,25 +91,25 @@ export default function HomePage() {
       {/* Location fallback toast */}
       {showFallbackToast && (
         <div
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 rounded-lg px-4 py-3 lg:bottom-6"
           style={{
-            backgroundColor: "var(--color-surface-2)",
+            position: "fixed",
+            bottom: 80,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 50,
+            borderRadius: 10,
+            padding: "10px 16px",
+            backgroundColor: "var(--color-surface)",
             border: "1px solid var(--color-border)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
             maxWidth: "calc(100vw - 32px)",
+            whiteSpace: "nowrap",
           }}
           role="status"
           aria-live="polite"
         >
-          <p
-            style={{
-              fontSize: "12px",
-              color: "var(--color-text-2)",
-              fontFamily: "var(--font-mono)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Using San Francisco city centre. Enable location for nearby cases.
+          <p style={{ fontSize: "12px", color: "var(--color-text-2)", fontFamily: "var(--font-mono)" }}>
+            Using SF city centre — enable location for nearby cases.
           </p>
         </div>
       )}

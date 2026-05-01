@@ -22,7 +22,7 @@ export function Button({
     gap: "8px",
     minHeight: "44px",
     padding: "0 20px",
-    borderRadius: "6px",
+    borderRadius: "10px",
     fontSize: "14px",
     fontFamily: "var(--font-mono)",
     fontWeight: 500,

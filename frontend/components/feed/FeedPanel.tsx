@@ -5,7 +5,8 @@ import { useMapStore } from "@/store/mapStore"
 import { useFeed } from "@/hooks/useFeed"
 import { FeedCard } from "./FeedCard"
 import { FeedSkeleton } from "./FeedSkeleton"
-import { SORT_LABELS } from "@/lib/constants"
+import { SORT_LABELS, SF_NEIGHBORHOODS } from "@/lib/constants"
+import { NeighborhoodSummary } from "@/components/summary/NeighborhoodSummary"
 import type { SortOption } from "@/types"
 
 interface FeedPanelProps {
@@ -15,10 +16,10 @@ interface FeedPanelProps {
 const SORTS: SortOption[] = ["nearest", "stalest", "hottest"]
 
 export function FeedPanel({ coords }: FeedPanelProps) {
-  const { activeFilters, setSort } = useMapStore()
+  const { activeFilters, setSort, selectedNeighbourhood, setSelectedNeighbourhood, mapMode, setMapMode } = useMapStore()
   const { data, isLoading, isError, refetch } = useFeed(coords)
+  const [neighbourhoodOpen, setNeighbourhoodOpen] = useState(false)
 
-  // Pull-to-refresh
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef(0)
   const [refreshing, setRefreshing] = useState(false)
@@ -27,31 +28,70 @@ export function FeedPanel({ coords }: FeedPanelProps) {
     touchStartY.current = e.touches[0].clientY
   }
 
-  const onTouchEnd = useCallback(
-    async (e: React.TouchEvent) => {
-      const scrollEl = scrollRef.current
-      if (!scrollEl) return
-      const delta = e.changedTouches[0].clientY - touchStartY.current
-      if (delta > 60 && scrollEl.scrollTop === 0) {
-        setRefreshing(true)
-        await refetch()
-        setRefreshing(false)
-      }
-    },
-    [refetch],
-  )
+  const onTouchEnd = useCallback(async (e: React.TouchEvent) => {
+    const el = scrollRef.current
+    if (!el) return
+    const delta = e.changedTouches[0].clientY - touchStartY.current
+    if (delta > 60 && el.scrollTop === 0) {
+      setRefreshing(true)
+      await refetch()
+      setRefreshing(false)
+    }
+  }, [refetch])
 
   return (
-    <div
-      className="flex flex-col h-full"
-      style={{ backgroundColor: "var(--color-surface)" }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+
+      {/* Live / Heat toggle */}
+      <div
+        style={{
+          display: "flex",
+          padding: "10px 16px 8px",
+          gap: 6,
+          borderBottom: "1px solid var(--color-border)",
+          flexShrink: 0,
+        }}
+      >
+        {(["live", "heatmap"] as const).map((mode) => {
+          const active = mapMode === mode
+          return (
+            <button
+              key={mode}
+              onClick={() => setMapMode(mode)}
+              style={{
+                flex: 1,
+                padding: "8px",
+                borderRadius: 8,
+                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                fontWeight: 700,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                border: active ? "none" : "1px solid var(--color-border)",
+                backgroundColor: active ? "var(--color-accent)" : "transparent",
+                color: active ? "#FFFFFF" : "var(--color-text-2)",
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+              aria-pressed={active}
+            >
+              {mode === "live" ? "Live" : "Heatmap"}
+            </button>
+          )
+        })}
+      </div>
+
       {/* Sort tabs */}
       <div
-        className="flex px-4 py-3 gap-2 flex-shrink-0"
-        style={{ borderBottom: "1px solid var(--color-border)" }}
+        style={{
+          display: "flex",
+          gap: 6,
+          padding: "12px 16px 10px",
+          borderBottom: "1px solid var(--color-border)",
+          flexShrink: 0,
+        }}
         role="tablist"
-        aria-label="Sort feed by"
+        aria-label="Sort feed"
       >
         {SORTS.map((sort) => {
           const active = activeFilters.sort === sort
@@ -61,14 +101,20 @@ export function FeedPanel({ coords }: FeedPanelProps) {
               role="tab"
               aria-selected={active}
               onClick={() => setSort(sort)}
-              className="flex-1 py-2 rounded text-xs font-medium transition-colors"
               style={{
+                flex: 1,
+                padding: "7px 4px",
+                borderRadius: 8,
+                fontSize: "11px",
                 fontFamily: "var(--font-mono)",
-                backgroundColor: active ? "rgba(255,76,0,0.08)" : "transparent",
-                color: active ? "var(--color-accent)" : "var(--color-text-2)",
-                border: active ? "1px solid rgba(255,76,0,0.2)" : "1px solid transparent",
-                minHeight: "44px",
+                fontWeight: active ? 600 : 400,
                 letterSpacing: "0.02em",
+                border: active ? "1px solid rgba(201,56,0,0.25)" : "1px solid transparent",
+                backgroundColor: active ? "rgba(201,56,0,0.07)" : "transparent",
+                color: active ? "var(--color-accent)" : "var(--color-text-2)",
+                cursor: "pointer",
+                transition: "all 0.15s",
+                whiteSpace: "nowrap",
               }}
             >
               {SORT_LABELS[sort]}
@@ -77,16 +123,106 @@ export function FeedPanel({ coords }: FeedPanelProps) {
         })}
       </div>
 
-      {/* List */}
+      {/* Neighbourhood selector */}
+      <div
+        style={{
+          padding: "10px 16px",
+          borderBottom: "1px solid var(--color-border)",
+          flexShrink: 0,
+        }}
+      >
+        <button
+          onClick={() => setNeighbourhoodOpen((o) => !o)}
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "9px 12px",
+            borderRadius: 10,
+            border: "1px solid var(--color-border)",
+            backgroundColor: selectedNeighbourhood ? "rgba(201,56,0,0.05)" : "var(--color-surface-2)",
+            cursor: "pointer",
+            fontSize: "13px",
+            fontFamily: "var(--font-sans)",
+            color: selectedNeighbourhood ? "var(--color-accent)" : "var(--color-text-2)",
+          }}
+          aria-label="Select neighbourhood for AI summary"
+          aria-expanded={neighbourhoodOpen}
+        >
+          <span>{selectedNeighbourhood ?? "AI neighbourhood summary…"}</span>
+          <ChevronIcon open={neighbourhoodOpen} />
+        </button>
+
+        {/* Dropdown */}
+        {neighbourhoodOpen && (
+          <div
+            style={{
+              marginTop: 6,
+              border: "1px solid var(--color-border)",
+              borderRadius: 10,
+              backgroundColor: "var(--color-surface)",
+              maxHeight: 200,
+              overflowY: "auto",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+            }}
+          >
+            <button
+              onClick={() => { setSelectedNeighbourhood(null); setNeighbourhoodOpen(false) }}
+              style={{
+                width: "100%",
+                textAlign: "left",
+                padding: "10px 14px",
+                fontSize: "13px",
+                fontFamily: "var(--font-sans)",
+                color: "var(--color-text-3)",
+                borderBottom: "1px solid var(--color-border)",
+                backgroundColor: "transparent",
+                cursor: "pointer",
+              }}
+            >
+              — Clear selection
+            </button>
+            {SF_NEIGHBORHOODS.map((n) => (
+              <button
+                key={n}
+                onClick={() => { setSelectedNeighbourhood(n); setNeighbourhoodOpen(false) }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "10px 14px",
+                  fontSize: "13px",
+                  fontFamily: "var(--font-sans)",
+                  color: selectedNeighbourhood === n ? "var(--color-accent)" : "var(--color-text-1)",
+                  backgroundColor: selectedNeighbourhood === n ? "rgba(201,56,0,0.05)" : "transparent",
+                  borderBottom: "1px solid var(--color-border)",
+                  cursor: "pointer",
+                }}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Summary */}
+        {selectedNeighbourhood && !neighbourhoodOpen && (
+          <div style={{ marginTop: 10 }}>
+            <NeighborhoodSummary neighbourhood={selectedNeighbourhood} />
+          </div>
+        )}
+      </div>
+
+      {/* Feed list */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto"
+        style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         role="tabpanel"
       >
         {refreshing && (
-          <div className="py-2 text-center">
+          <div style={{ padding: "8px 0", textAlign: "center" }}>
             <span style={{ fontSize: "11px", color: "var(--color-text-3)", fontFamily: "var(--font-mono)" }}>
               Refreshing…
             </span>
@@ -96,19 +232,21 @@ export function FeedPanel({ coords }: FeedPanelProps) {
         {isLoading && <FeedSkeleton />}
 
         {isError && (
-          <div className="flex flex-col items-center justify-center gap-3 p-8 text-center">
-            <AlertIcon />
+          <div style={{ padding: "40px 20px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
             <p style={{ fontSize: "13px", color: "var(--color-text-2)" }}>
-              Could not load cases near you. Check your connection and try again.
+              Couldn't load nearby cases.
             </p>
             <button
               onClick={() => refetch()}
-              className="text-xs px-4 py-2 rounded"
               style={{
+                fontSize: "12px",
+                padding: "8px 16px",
+                border: "1px solid var(--color-border)",
+                borderRadius: 8,
                 color: "var(--color-accent)",
-                border: "1px solid rgba(255,76,0,0.3)",
                 fontFamily: "var(--font-mono)",
-                minHeight: "44px",
+                backgroundColor: "transparent",
+                cursor: "pointer",
               }}
             >
               Try again
@@ -117,57 +255,41 @@ export function FeedPanel({ coords }: FeedPanelProps) {
         )}
 
         {!isLoading && !isError && data?.items.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 p-8 text-center">
-            <EmptyIcon />
-            <p style={{ fontSize: "13px", color: "var(--color-text-2)" }}>
-              No open cases found nearby.
-            </p>
+          <div style={{ padding: "48px 20px", textAlign: "center" }}>
+            <p style={{ fontSize: "13px", color: "var(--color-text-2)" }}>No open cases nearby.</p>
           </div>
         )}
 
         {!isLoading && data?.items.map((item) => (
           <FeedCard key={item.id} item={item} />
         ))}
-      </div>
 
-      {/* Count footer */}
-      {data && data.total > 0 && (
-        <div
-          className="flex-shrink-0 px-4 py-2"
-          style={{ borderTop: "1px solid var(--color-border)" }}
-        >
-          <span
-            style={{
-              fontSize: "11px",
-              color: "var(--color-text-3)",
-              fontFamily: "var(--font-mono)",
-            }}
-          >
-            {data.total} open case{data.total !== 1 ? "s" : ""} nearby
-          </span>
-        </div>
-      )}
+        {data && data.total > 0 && (
+          <div style={{ padding: "12px 16px", borderTop: "1px solid var(--color-border)" }}>
+            <span style={{ fontSize: "11px", color: "var(--color-text-3)", fontFamily: "var(--font-mono)" }}>
+              {data.total} open case{data.total !== 1 ? "s" : ""} nearby
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
-function AlertIcon() {
+function ChevronIcon({ open }: { open: boolean }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-3)" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-  )
-}
-
-function EmptyIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-3)" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 15s1.5-2 4-2 4 2 4 2" />
-      <line x1="9" y1="9" x2="9.01" y2="9" />
-      <line x1="15" y1="9" x2="15.01" y2="9" />
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+      style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s", flexShrink: 0 }}
+    >
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   )
 }
