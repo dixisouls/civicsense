@@ -17,7 +17,7 @@ interface MapContainerProps {
 export function MapContainer({ coords, className, style }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<google.maps.Map | null>(null)
-  const { mapMode, heatmapDateRange, setHeatmapDateRange } = useMapStore()
+  const { center, mapMode, heatmapDateRange, setHeatmapDateRange } = useMapStore()
   const { liveQuery, heatmapQuery } = useMapData(coords)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [draftFrom, setDraftFrom] = useState(heatmapDateRange.from)
@@ -44,8 +44,8 @@ export function MapContainer({ coords, className, style }: MapContainerProps) {
 
   useEffect(() => {
     if (!googleMapRef.current) return
-    googleMapRef.current.panTo(coords)
-  }, [coords])
+    googleMapRef.current.panTo(center)
+  }, [center])
 
   const openDatePicker = () => {
     setDraftFrom(heatmapDateRange.from)
