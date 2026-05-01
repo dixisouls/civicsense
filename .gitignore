@@ -1,0 +1,46 @@
+# ===== General =====
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+
+# ===== Frontend (Next.js / Node) =====
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+.turbo
+.eslintcache
+.cache/
+coverage/
+*.local
+
+# ===== Backend (Python) =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+dist/
+build/
+
+# ===== Secrets / Uploads =====
+backend/uploads/
+backend/firebase-service-account.json
+
+# ===== Editors / IDEs =====
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ===== Data =====
+backend/scripts/data.csv
