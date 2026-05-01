@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg: #0A0A0A;
-  --color-surface: #141414;
-  --color-surface-2: #1C1C1C;
-  --color-border: #2A2A2A;
-  --color-accent: #FF4C00;
-  --color-text-1: #F5F5F5;
-  --color-text-2: #888888;
-  --color-text-3: #444444;
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
+  --color-bg: #F5F1EB;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #EDE9E3;
+  --color-border: #DDD8D0;
+  --color-accent: #C93800;
+  --color-text-1: #1C1917;
+  --color-text-2: #78716C;
+  --color-text-3: #A8A29E;
+  --color-success: #15803D;
+  --color-warning: #B45309;
+  --color-danger: #B91C1C;
 
   --font-mono: var(--font-dm-mono);
   --font-sans: var(--font-inter);
@@ -26,8 +26,8 @@
 html,
 body {
   height: 100%;
-  background-color: #0A0A0A;
-  color: #F5F5F5;
+  background-color: #F5F1EB;
+  color: #1C1917;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -41,7 +41,7 @@ body {
 input,
 textarea,
 select {
-  font-size: 16px; /* prevent iOS zoom */
+  font-size: 16px;
 }
 
 @keyframes shimmer {
@@ -50,38 +50,61 @@ select {
 }
 
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    #1C1C1C 25%,
-    #252525 50%,
-    #1C1C1C 75%
-  );
+  background: linear-gradient(90deg, #EDE9E3 25%, #E5E0D8 50%, #EDE9E3 75%);
   background-size: 800px 100%;
   animation: shimmer 1.4s infinite linear;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Map popup dark theme — applied inline but base reset here */
+/* ── Google Maps: light popup ─────────────────────────────────────── */
 .gm-style .gm-style-iw-c {
-  background: #141414 !important;
-  border: 1px solid #2A2A2A !important;
-  border-radius: 8px !important;
+  background: #FFFFFF !important;
+  border: 1px solid #DDD8D0 !important;
+  border-radius: 12px !important;
   padding: 0 !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1) !important;
 }
-
 .gm-style .gm-style-iw-d {
   overflow: hidden !important;
 }
-
 .gm-style .gm-style-iw-t::after {
-  background: #141414 !important;
+  background: #FFFFFF !important;
+}
+.gm-style .gm-ui-hover-effect {
+  opacity: 0.4 !important;
 }
 
-.gm-style .gm-ui-hover-effect {
-  filter: invert(1) !important;
-  opacity: 0.6 !important;
+/* ── Google Places autocomplete ──────────────────────────────────── */
+.pac-container {
+  background: #FFFFFF;
+  border: 1px solid #DDD8D0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  margin-top: 6px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow: hidden;
+}
+.pac-item {
+  padding: 10px 16px;
+  color: #1C1917;
+  border-top: 1px solid #EDE9E3;
+  cursor: pointer;
+  font-size: 14px;
+}
+.pac-item:first-child {
+  border-top: none;
+}
+.pac-item:hover,
+.pac-item-selected {
+  background: #F5F1EB;
+}
+.pac-item-query {
+  color: #1C1917;
+  font-size: 14px;
+}
+.pac-matched {
+  color: #C93800;
+  font-weight: 600;
+}
+.pac-icon {
+  display: none;
 }
