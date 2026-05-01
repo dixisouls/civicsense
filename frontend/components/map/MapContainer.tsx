@@ -17,7 +17,7 @@ interface MapContainerProps {
 export function MapContainer({ coords, className, style }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<google.maps.Map | null>(null)
-  const { center, mapMode, heatmapDateRange, setHeatmapDateRange } = useMapStore()
+  const { center, selectedMarkerId, mapMode, heatmapDateRange, setHeatmapDateRange } = useMapStore()
   const { liveQuery, heatmapQuery } = useMapData(coords)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [draftFrom, setDraftFrom] = useState(heatmapDateRange.from)
@@ -46,6 +46,15 @@ export function MapContainer({ coords, className, style }: MapContainerProps) {
     if (!googleMapRef.current) return
     googleMapRef.current.panTo(center)
   }, [center])
+
+  // Pan to selected marker when a feed card is tapped
+  useEffect(() => {
+    if (!googleMapRef.current || !selectedMarkerId || !liveQuery.data) return
+    const marker = liveQuery.data.markers.find((m) => m.id === selectedMarkerId)
+    if (!marker) return
+    googleMapRef.current.panTo({ lat: marker.lat, lng: marker.lng })
+    googleMapRef.current.setZoom(17)
+  }, [selectedMarkerId, liveQuery.data])
 
   const openDatePicker = () => {
     setDraftFrom(heatmapDateRange.from)
