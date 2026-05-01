@@ -4,48 +4,14 @@ import type { Severity, Source } from "@/types"
 interface CategoryBadgeProps {
   category: string | null
 }
-
 interface SeverityBadgeProps {
   severity: Severity | null
 }
-
 interface SourceBadgeProps {
   source: Source
 }
-
 interface StatusBadgeProps {
   status: string
-}
-
-const baseBadge: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "5px",
-  paddingLeft: "7px",
-  paddingRight: "7px",
-  paddingTop: "3px",
-  paddingBottom: "3px",
-  borderRadius: "4px",
-  fontSize: "11px",
-  fontFamily: "var(--font-mono)",
-  fontWeight: 500,
-  letterSpacing: "0.02em",
-  whiteSpace: "nowrap",
-}
-
-function Dot({ color }: { color: string }) {
-  return (
-    <span
-      style={{
-        width: "6px",
-        height: "6px",
-        borderRadius: "50%",
-        backgroundColor: color,
-        flexShrink: 0,
-      }}
-      aria-hidden="true"
-    />
-  )
 }
 
 export function CategoryBadge({ category }: CategoryBadgeProps) {
@@ -54,13 +20,31 @@ export function CategoryBadge({ category }: CategoryBadgeProps) {
   return (
     <span
       style={{
-        ...baseBadge,
-        color: "var(--color-text-1)",
-        backgroundColor: "var(--color-surface-2)",
-        border: "1px solid var(--color-border)",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "5px",
+        padding: "2px 8px 2px 6px",
+        borderRadius: "6px",
+        fontSize: "11px",
+        fontFamily: "var(--font-mono)",
+        fontWeight: 500,
+        letterSpacing: "0.01em",
+        whiteSpace: "nowrap",
+        backgroundColor: `${color}14`,
+        color: color,
+        border: `1px solid ${color}30`,
       }}
     >
-      <Dot color={color} />
+      <span
+        style={{
+          width: 5,
+          height: 5,
+          borderRadius: "50%",
+          backgroundColor: color,
+          flexShrink: 0,
+          display: "inline-block",
+        }}
+      />
       {label}
     </span>
   )
@@ -73,13 +57,20 @@ export function SeverityBadge({ severity }: SeverityBadgeProps) {
   return (
     <span
       style={{
-        ...baseBadge,
-        color,
-        backgroundColor: `${color}14`,
-        border: `1px solid ${color}30`,
+        display: "inline-block",
+        padding: "2px 7px",
+        borderRadius: "4px",
+        fontSize: "11px",
+        fontFamily: "var(--font-mono)",
+        fontWeight: 600,
+        letterSpacing: "0.04em",
+        whiteSpace: "nowrap",
+        textTransform: "uppercase",
+        backgroundColor: `${color}12`,
+        color: color,
+        border: `1px solid ${color}28`,
       }}
     >
-      <Dot color={color} />
       {label}
     </span>
   )
@@ -87,16 +78,25 @@ export function SeverityBadge({ severity }: SeverityBadgeProps) {
 
 export function SourceBadge({ source }: SourceBadgeProps) {
   const isUser = source === "user"
+  if (!isUser) return null
   return (
     <span
       style={{
-        ...baseBadge,
-        color: isUser ? "var(--color-accent)" : "var(--color-text-2)",
-        backgroundColor: isUser ? "rgba(255,76,0,0.08)" : "var(--color-surface-2)",
-        border: `1px solid ${isUser ? "rgba(255,76,0,0.2)" : "var(--color-border)"}`,
+        display: "inline-block",
+        padding: "2px 7px",
+        borderRadius: "4px",
+        fontSize: "10px",
+        fontFamily: "var(--font-mono)",
+        fontWeight: 600,
+        letterSpacing: "0.06em",
+        whiteSpace: "nowrap",
+        textTransform: "uppercase",
+        backgroundColor: "rgba(201,56,0,0.08)",
+        color: "var(--color-accent)",
+        border: "1px solid rgba(201,56,0,0.2)",
       }}
     >
-      {isUser ? "You reported" : "311"}
+      You
     </span>
   )
 }
@@ -106,13 +106,30 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <span
       style={{
-        ...baseBadge,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "5px",
+        padding: "2px 8px 2px 6px",
+        borderRadius: "6px",
+        fontSize: "11px",
+        fontFamily: "var(--font-mono)",
+        fontWeight: 500,
+        whiteSpace: "nowrap",
+        backgroundColor: "rgba(21,128,61,0.08)",
         color: "var(--color-success)",
-        backgroundColor: "rgba(34,197,94,0.08)",
-        border: "1px solid rgba(34,197,94,0.2)",
+        border: "1px solid rgba(21,128,61,0.2)",
       }}
     >
-      <Dot color="var(--color-success)" />
+      <span
+        style={{
+          width: 5,
+          height: 5,
+          borderRadius: "50%",
+          backgroundColor: "var(--color-success)",
+          flexShrink: 0,
+          display: "inline-block",
+        }}
+      />
       {label}
     </span>
   )
