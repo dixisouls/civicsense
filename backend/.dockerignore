@@ -1,0 +1,19 @@
+# Env and secrets
+.env
+firebase-service-account.json
+
+# Not needed in the image
+alembic/
+alembic.ini
+scripts/
+uploads/
+README.md
+.gitignore
+
+# OS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
